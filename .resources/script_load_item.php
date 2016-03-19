@@ -9,7 +9,7 @@
 	$domain = $_SERVER['HTTP_HOST'];
 	$path_get_urlencoded = $protocol.$domain.'/.resources/script_load_item.php?var=false';
 	//echo('<h1>'.$path_html.'</h1>');
-	$cwd = dirname(getcwd());
+	$cwd = implode('/', explode('/', dirname(getcwd()), -1));
 	/*
 	$item = scandir($cwd, SCANDIR_SORT_ASCENDING);
 	$sizeof_item = sizeof($item);
@@ -25,7 +25,7 @@
 	*/
 	if(filetype($target) == 'file'){
 		//file found
-		echo('<a href="'.$protocol.$domain.'/'.$path.'" class="item_link file_link"><li id="record_" class="item_record_inactive"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($target)).'</div></li></a>');
+		echo('<a href="'.$protocol.$domain.dirname($_SERVER['PHP_SELF']).$path.'" class="item_link file_link"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" style="width:200px;height:auto;" /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($target)).'</div></a>');
 	}
 	else if(filetype($target) == 'dir'){
 		//directory found
