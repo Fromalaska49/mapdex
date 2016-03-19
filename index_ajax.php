@@ -116,7 +116,6 @@ $max_level = $level;
 				*/
 				function loadItemLink(){
 					$(".item_link").on("click", function(){
-						alert("activated");
 						var path_array = $(this).attr("id").split("-");
 						var path = path_array[1];
 						for(var i = 2; i < path_array.length; i++){
