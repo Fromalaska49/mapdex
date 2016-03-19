@@ -118,7 +118,7 @@
 					}
 				}
 				if(substr($item[$i], 0, 1) == '.'){
-					//invisible file found
+					//invisible item found
 				}
 				else if(filetype($current_item) == 'file'){
 					//file found
