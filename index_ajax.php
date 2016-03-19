@@ -18,18 +18,8 @@ for($level = 1; isset($_GET['l'.$level]) && !empty($_GET['l'.$level]); $level++)
 $cwd = getcwd();
 $max_level = $level;
 ?>
-<!--
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
-[
-  <!ATTLIST a path CDATA #IMPLIED>
-]>
--->
 <html>
 	<head>
-		<!--
-			<meta http-equiv="content-type" content="application/xhtml+xml" />
-		-->
 		<style type="text/css">
 			body{
 				font-family:arial;
@@ -96,7 +86,6 @@ $max_level = $level;
 				window.path = '';
 				window.active_record_id;
 				window.max_level = 0;
-				
 				$.ajax({
 					type: "POST",
 					url: ".resources/script_load_item.php",
@@ -112,6 +101,7 @@ $max_level = $level;
 					$ul.append(contents);
 					$("#filesystem_container").append($ul);
 					window.max_level++;
+					loadItem();
 				});
 				/*
 				$('body').on('click','#a.link',function(e){
@@ -124,37 +114,38 @@ $max_level = $level;
 					e.stopImmediatePropogation();
 				});
 				*/
-				$("li.item_link").on("click", function(){
-					alert("activated");
-					var path_array = split("-", $(this).attr("id"));
-					var path = path_array[1];
-					for(var i = 2; i < path_array.length; i++){
-						path += "-" + path_array[i];
-					}
-					$.ajax({
-						type: "POST",
-						url: ".resources/script_load_item.php",
-						data: {
-							"path": path,
+				function loadItem(){
+					$(".item_link").on("click", function(){
+						alert("activated");
+						var path_array = split("-", $(this).attr("id"));
+						var path = path_array[1];
+						for(var i = 2; i < path_array.length; i++){
+							path += "-" + path_array[i];
 						}
-					}).done(function(contents){
-						/*
-						for(i = $(this).attr("#max-level-"+path); i > window.max_level; i--){
-							$("#l"+i).remove();
-						}
-						window.max_level = $("#max-level-"+path).attr("max-level") + 1;
-						*/
-						var $ul = $("<ul>", {
-							"id": "l"+window.max_level,
-							"class": "directory_container",
-							"style": "left:"+window.max_level*800+"px;",
+						$.ajax({
+							type: "POST",
+							url: ".resources/script_load_item.php",
+							data: {
+								"path": path,
+							}
+						}).done(function(contents){
+							/*
+							for(i = $(this).attr("#max-level-"+path); i > window.max_level; i--){
+								$("#l"+i).remove();
+							}
+							window.max_level = $("#max-level-"+path).attr("max-level") + 1;
+							*/
+							var $ul = $("<ul>", {
+								"id": "l"+window.max_level,
+								"class": "directory_container",
+								"style": "left:"+window.max_level*800+"px;",
+							});
+							$ul.append(contents);
+							$("#filesystem_container").append($ul);
+							window.max_level++;
 						});
-						$ul.append(contents);
-						$("#filesystem_container").append($ul);
-						window.max_level++;
-						
 					});
-				});
+				}
 				$("a.item_link").on("dblclick", function(){
 					window.location.assign($(this).attr("href"));
 				});
