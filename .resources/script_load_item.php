@@ -35,7 +35,7 @@
 		echo('<div id="filesystem_container">');
 		echo('<ul class="directory_container" style="left:'.($level*800).'px;">');
 		for($i = 0; $i < $sizeof_item; $i++){
-			$current_item = $target.$item[$i];
+			$current_item = $target.'/'.$item[$i];
 			$item_record_class = 'item_record_inactive';
 			/*
 			if($level < $max_level -1){
@@ -49,11 +49,11 @@
 			}
 			else if(filetype($current_item) == 'file'){
 				//file found
-				echo('<a href="'.$path.$item[$i].'" class="item_link file_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
+				echo('<a href="'.$path.'/'.$item[$i].'" class="item_link file_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
 			}
 			else if(filetype($current_item) == 'dir'){
 				//directory found
-				echo('<a href="'.$path.$item[$i].'" class="item_link directory_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
+				echo('<a href="'.$path.'/'.$item[$i].'" class="item_link directory_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
 			}
 			else{
 				//unkown item found
