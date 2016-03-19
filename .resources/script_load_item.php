@@ -34,6 +34,7 @@
 		$sizeof_item = sizeof($item);
 		for($i = 0; $i < $sizeof_item; $i++){
 			$current_item = $target.'/'.$item[$i];
+			$current_path = $path.'/'.$item[$i];
 			$item_record_class = 'item_record_inactive';
 			/*
 			if($level < $max_level -1){
@@ -47,11 +48,11 @@
 			}
 			else if(filetype($current_item) == 'file'){
 				//file found
-				echo('<a href="'.$path.'/'.$item[$i].'" class="item_link file_link"><li id="record_'.$path.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
+				echo('<li id="record-'.$current_path.'" class="item_link file_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li>');
 			}
 			else if(filetype($current_item) == 'dir'){
 				//directory found
-				echo('<a href="'.$path.'/'.$item[$i].'" class="item_link directory_link"><li id="record_'.$path.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
+				echo('<li id="record-'.$current_path.'" class="item_link directory_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li>');
 			}
 			else{
 				//unkown item found
