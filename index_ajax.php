@@ -113,6 +113,7 @@ $max_level = $level;
 						event.preventDefault();
 					}
 					*/
+					//seems to be broken
 					event.preventDefault();
 					//else{
 						$.ajax({
