@@ -25,7 +25,7 @@
 	*/
 	if(filetype($target) == 'file'){
 		//file found
-		echo('<a href="'.$protocol.$domain.dirname($_SERVER['PHP_SELF']).$path.'" class="item_link file_link"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" style="width:200px;height:auto;" /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($target)).'</div></a>');
+		echo('<a href="'.$protocol.$domain.implode('/', explode('/', dirname($_SERVER['PHP_SELF']), -2)).$path.'" class="item_link file_link"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" style="width:200px;height:auto;" /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($target)).'</div></a>');
 	}
 	else if(filetype($target) == 'dir'){
 		//directory found
