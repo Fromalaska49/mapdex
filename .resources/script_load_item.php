@@ -37,11 +37,13 @@
 		for($i = 0; $i < $sizeof_item; $i++){
 			$current_item = $target.$item[$i];
 			$item_record_class = 'item_record_inactive';
+			/*
 			if($level < $max_level -1){
 				if($url_path_array[$level+1] == $item[$i]){
 					$item_record_class = 'item_record_active';
 				}
 			}
+			*/
 			if(substr($item[$i], 0, 1) == '.'){
 				//invisible item found
 			}
