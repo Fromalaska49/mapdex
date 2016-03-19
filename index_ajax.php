@@ -83,8 +83,27 @@ $max_level = $level;
 		<script src=".resources/jquery-2.2.0.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
+				window.path = '';
 				window.active_record_id;
-				window.max_level = <?php echo($max_level); ?>;
+				window.max_level = 0;
+				
+				$.ajax({
+					type: "POST",
+					url: ".resources/script_load_item.php",
+					data: {
+						"path": "",
+					}
+				}).done(function(contents){
+					var $ul = $("<ul>", {
+						"id": "l"+window.max_level,
+						"class": "directory_container",
+						"style": "left:"+window.max_level*800+"px;",
+					});
+					$ul.append(contents);
+					$("#filesystem_container").append($ul);
+					window.max_level++;
+				});
+				
 				$('body').on('click','#a.link',function(e){
 					e.preventDefault()
 				});
@@ -97,9 +116,16 @@ $max_level = $level;
 					event.preventDefault();
 					//else{
 						$.ajax({
-							"method": "GET",
-							"url": $(this).attr("href"),
+							type: "POST",
+							url: ".resources/script_load_item.php",
+							data: {
+								"path": $(this).attr("href"),
+							}
 						}).done(function(contents){
+							for(i = $(this).attr("max-level"); i > window.max_level; i--){
+								$("#l"+i).remove();
+							}
+							window.max_level = $(this).attr("max-level") + 1;
 							var $ul = $("<ul>", {
 								"id": "l"+window.max_level,
 								"class": "directory_container",
