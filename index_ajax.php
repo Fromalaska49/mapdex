@@ -85,7 +85,7 @@ $max_level = $level;
 			$(document).ready(function(){
 				window.path = '';
 				window.active_record_id;
-				window.max_level = 0;
+				window.level = 0;
 				$.ajax({
 					type: "POST",
 					url: ".resources/script_load_item.php",
@@ -94,13 +94,13 @@ $max_level = $level;
 					}
 				}).done(function(contents){
 					var $ul = $("<ul>", {
-						"id": "l"+window.max_level,
+						"id": "l"+window.level,
 						"class": "directory_container",
-						"style": "left:"+window.max_level*800+"px;",
+						"style": "left:"+window.level*800+"px;",
 					});
 					$ul.append(contents);
 					$("#filesystem_container").append($ul);
-					window.max_level++;
+					window.level++;
 					loadItemLink();
 				});
 				/*
@@ -116,11 +116,19 @@ $max_level = $level;
 				*/
 				function loadItemLink(){
 					$(".item_link").on("click", function(){
-						var path_array = $(this).attr("id").split("-");
-						var path = path_array[1];
-						for(var i = 2; i < path_array.length; i++){
-							path += "-" + path_array[i];
+						var pathArray = $(this).attr("id").split("-");
+						var path = pathArray[1];
+						for(var i = 2; i < pathArray.length; i++){
+							path += "-" + pathArray[i];
 						}
+						
+						pathArray = path.split("/");
+						var level = pathArray.length - 1;
+						for(var i = window.level; i > level; i--){
+							$("#level-"+i).remove();
+						}
+						window.level = level;
+						
 						$.ajax({
 							type: "POST",
 							url: ".resources/script_load_item.php",
@@ -128,20 +136,14 @@ $max_level = $level;
 								"path": path,
 							}
 						}).done(function(contents){
-							/*
-							for(i = $(this).attr("#max-level-"+path); i > window.max_level; i--){
-								$("#l"+i).remove();
-							}
-							window.max_level = $("#max-level-"+path).attr("max-level") + 1;
-							*/
 							var $ul = $("<ul>", {
-								"id": "l"+window.max_level,
+								"id": "level-" + window.level,
 								"class": "directory_container",
-								"style": "left:"+window.max_level*800+"px;",
+								"style": "left:"+window.level*840+"px;",
 							});
 							$ul.append(contents);
 							$("#filesystem_container").append($ul);
-							window.max_level++;
+							window.level++;
 							loadItemLink();
 						});
 					});
@@ -160,48 +162,12 @@ $max_level = $level;
 		</script>
 	</head>
 	<body>
-		<?php
-		echo('<h1>'.$path_html.'</h1>');
-		/*
-		for($level = 0; $level < $max_level; $level++){
-			$cwd .= $url_path_array[$level].'/';
-			echo($cwd.'<br />');
-			$item = scandir($cwd, SCANDIR_SORT_ASCENDING);
-			$sizeof_item = sizeof($item);
-			*/
-			echo('<div id="filesystem_container">');
-			/*
-			echo('<ul class="directory_container" style="left:'.($level*800).'px;">');
-			for($i = 0; $i < $sizeof_item; $i++){
-				$current_item = $cwd.$item[$i];
-				$item_record_class = 'item_record_inactive';
-				if($level < $max_level -1){
-					if($url_path_array[$level+1] == $item[$i]){
-						$item_record_class = 'item_record_active';
-					}
-				}
-				if(substr($item[$i], 0, 1) == '.'){
-					//invisible item found
-				}
-				else if(filetype($current_item) == 'file'){
-					//file found
-					echo('<a href="'.$path_get_urlencoded.rawurlencode($item[$i]).'" class="item_link file_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
-				}
-				else if(filetype($current_item) == 'dir'){
-					//directory found
-					echo('<a href="'.$path_get_urlencoded.'&l'.($level+1).'='.rawurlencode($item[$i]).'" class="item_link directory_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
-				}
-				else{
-					//unkown item found
-					//echo('<li class="item_record"><div class="item_record_name">Error: cannot detect filetype of <a href="'.$protocol.$domain.'/'.rawurlencode($item[$i]).'">'.htmlentities($item[$i]).'</a></div></li>');
-				}
-			}
-			echo('</ul>');
-			*/
-			echo('</div>');
-			/*
-		}
-		*/
-		?>
+		<h1>
+			<?php
+				echo($path_html);
+			?>
+		</h1>
+		<div id="filesystem_container">
+		</div>
 	</body>
 </html>
