@@ -116,6 +116,7 @@ $max_level = $level;
 				*/
 				function loadItemLink(){
 					$(".item_link").on("click", function(){
+						alert("An .item_link has been clicked");
 						var path_array = $(this).attr("id").split("-");
 						var path = path_array[1];
 						for(var i = 2; i < path_array.length; i++){
@@ -142,6 +143,7 @@ $max_level = $level;
 							$ul.append(contents);
 							$("#filesystem_container").append($ul);
 							window.max_level++;
+							loadItemLink();
 						});
 					});
 				}
