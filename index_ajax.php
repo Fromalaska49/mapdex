@@ -101,7 +101,7 @@ $max_level = $level;
 					$ul.append(contents);
 					$("#filesystem_container").append($ul);
 					window.max_level++;
-					loadItem();
+					loadItemLink();
 				});
 				/*
 				$('body').on('click','#a.link',function(e){
@@ -114,10 +114,10 @@ $max_level = $level;
 					e.stopImmediatePropogation();
 				});
 				*/
-				function loadItem(){
+				function loadItemLink(){
 					$(".item_link").on("click", function(){
 						alert("activated");
-						var path_array = split("-", $(this).attr("id"));
+						var path_array = $(this).attr("id").split("-");
 						var path = path_array[1];
 						for(var i = 2; i < path_array.length; i++){
 							path += "-" + path_array[i];
