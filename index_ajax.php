@@ -154,12 +154,15 @@ $max_level = $level;
 	<body>
 		<?php
 		echo('<h1>'.$path_html.'</h1>');
+		/*
 		for($level = 0; $level < $max_level; $level++){
 			$cwd .= $url_path_array[$level].'/';
 			echo($cwd.'<br />');
 			$item = scandir($cwd, SCANDIR_SORT_ASCENDING);
 			$sizeof_item = sizeof($item);
+			*/
 			echo('<div id="filesystem_container">');
+			/*
 			echo('<ul class="directory_container" style="left:'.($level*800).'px;">');
 			for($i = 0; $i < $sizeof_item; $i++){
 				$current_item = $cwd.$item[$i];
@@ -186,8 +189,11 @@ $max_level = $level;
 				}
 			}
 			echo('</ul>');
+			*/
 			echo('</div>');
+			/*
 		}
+		*/
 		?>
 	</body>
 </html>

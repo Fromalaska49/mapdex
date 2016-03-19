@@ -23,7 +23,7 @@
 		//invisible file found
 	}
 	*/
-	else if(filetype($target) == 'file'){
+	if(filetype($target) == 'file'){
 		//file found
 		echo('<a href="'.$protocol.$domain.'/'.$path.'" class="item_link file_link"><li id="record_" class="item_record_inactive"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($target)).'</div></li></a>');
 	}
