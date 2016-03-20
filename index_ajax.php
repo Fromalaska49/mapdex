@@ -94,14 +94,14 @@ $max_level = $level;
 					}
 				}).done(function(contents){
 					var $ul = $("<ul>", {
-						"id": "l"+window.level,
+						"id": "level-"+window.level,
 						"class": "directory_container",
 						"style": "left:"+window.level*800+"px;",
 					});
 					$ul.append(contents);
 					$("#filesystem_container").append($ul);
 					window.level++;
-					loadItemLink();
+					loadItem();
 				});
 				/*
 				$('body').on('click','#a.link',function(e){
@@ -114,7 +114,8 @@ $max_level = $level;
 					e.stopImmediatePropogation();
 				});
 				*/
-				function loadItemLink(){
+				function loadItem(){
+					$(".item_link").off("click");
 					$(".item_link").on("click", function(){
 						var pathArray = $(this).attr("id").split("-");
 						var path = pathArray[1];
@@ -124,7 +125,7 @@ $max_level = $level;
 						
 						pathArray = path.split("/");
 						var level = pathArray.length - 1;
-						for(var i = window.level; i > level; i--){
+						for(var i = window.level; i >= level; i--){
 							$("#level-"+i).remove();
 						}
 						window.level = level;
@@ -144,7 +145,7 @@ $max_level = $level;
 							$ul.append(contents);
 							$("#filesystem_container").append($ul);
 							window.level++;
-							loadItemLink();
+							loadItem();
 						});
 					});
 				}
