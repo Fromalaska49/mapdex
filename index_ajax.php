@@ -52,7 +52,7 @@ $max_level = $level;
 				font-size:16px;
 				display:inline-block;
 				margin:0px;
-				width:400px;
+				width:200px;
 				overflow:hidden;
 			}
 			.item_record_time{
@@ -61,7 +61,7 @@ $max_level = $level;
 				font-size:16px;
 				display:inline-block;
 				margin:0px;
-				width:200px;
+				width:100px;
 				overflow:hidden;
 			}
 			a.item_link, a.item_link:hover, a.item_link:visited{
@@ -72,7 +72,7 @@ $max_level = $level;
 				position:absolute;
 				top:100px;
 				bottom:0px;
-				width:800px;
+				width:400px;
 				border-style:solid;
 				border-color:#CCCCCC;
 				border-width:1px;
@@ -84,7 +84,7 @@ $max_level = $level;
 		<script type="text/javascript">
 			$(document).ready(function(){
 				window.path = '';
-				window.active_record_id;
+				window.active_record_id = "";
 				window.level = 0;
 				$.ajax({
 					type: "POST",
@@ -104,17 +104,27 @@ $max_level = $level;
 					loadItem();
 				});
 				/*
-				$('body').on('click','#a.link',function(e){
-					e.preventDefault();
-				});
-				*/
-				/*
-				$("a").on('click',function(e){
-					//e.preventDefault();
-					e.stopImmediatePropogation();
-				});
+				function scrollToResult(){
+					var options = {};
+					var scrollLeft = $("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").offset().left-(window.innerWidth+200-$("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").width())/2;
+					var scrollTop = $("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").offset().top-(window.innerHeight+45-$("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").height())/2;
+					options["scrollTop"] = scrollTop;
+					options["scrollLeft"] = scrollLeft;
+					var distance=Math.pow((scrollTop*scrollTop+scrollLeft*scrollLeft),(1/2));
+					duration=1000*(Math.log(distance+1097)-7);//1097 ~ e^7
+					$('html, body').animate(options, duration);
+				}
 				*/
 				function loadItem(){
+					$(".item_record_inactive").off("mousedown");
+					$(".item_record_inactive").on("mousedown",function(){
+						$("#"+window.active_record_id).removeClass("item_record_active");
+						$("#"+window.active_record_id).addClass("item_record_inactive");
+						$(this).addClass("item_record_active");
+						$(this).removeClass("item_record_inactive");
+						window.active_record_id = this.id;
+						//alert(window.active_record_id);
+					});
 					$(".item_link").off("click");
 					$(".item_link").on("click", function(){
 						var pathArray = $(this).attr("id").split("-");
@@ -140,10 +150,13 @@ $max_level = $level;
 							var $ul = $("<ul>", {
 								"id": "level-" + window.level,
 								"class": "directory_container",
-								"style": "left:"+window.level*840+"px;",
+								"style": "left:"+window.level*440+"px;",
 							});
 							$ul.append(contents);
 							$("#filesystem_container").append($ul);
+							$('html, body').animate({
+								scrollLeft: $("#level-"+window.level).offset().left
+							}, 100);
 							window.level++;
 							loadItem();
 						});
@@ -151,13 +164,6 @@ $max_level = $level;
 				}
 				$("a.item_link").on("dblclick", function(){
 					window.location.assign($(this).attr("href"));
-				});
-				$(".item_record_inactive").on("mousedown",function(){
-					$("#"+window.active_record_id).removeClass("item_record_active");
-					$("#"+window.active_record_id).addClass("item_record_inactive");
-					$(this).addClass("item_record_active");
-					$(this).removeClass("item_record_inactive");
-					window.active_record_id = this.id;
 				});
 			});
 		</script>
