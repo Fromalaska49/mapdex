@@ -117,23 +117,26 @@ $max_level = $level;
 				*/
 				function loadItem(){
 					$(".item_record_inactive").off("mousedown");
+					$(".item_record_active").off("mousedown");
 					$(".item_record_inactive").on("mousedown",function(){
-						$("#"+window.active_record_id).removeClass("item_record_active");
-						$("#"+window.active_record_id).addClass("item_record_inactive");
+						$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+						$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
 						$(this).addClass("item_record_active");
 						$(this).removeClass("item_record_inactive");
-						window.active_record_id = this.id;
+						window.active_record_id = $(this).attr("id");
 						//alert(window.active_record_id);
 					});
 					$(".item_link").off("click");
 					$(".item_link").on("click", function(){
-						var pathArray = $(this).attr("id").split("-");
-						var path = pathArray[1];
+						//var pathArray = $(this).attr("id").split("-");
+						var path = $(this).attr("id");//pathArray[1];
+						/*
 						for(var i = 2; i < pathArray.length; i++){
 							path += "-" + pathArray[i];
 						}
+						*/
 						
-						pathArray = path.split("/");
+						var pathArray = path.split("/");
 						var level = pathArray.length - 1;
 						for(var i = window.level; i >= level; i--){
 							$("#level-"+i).remove();

@@ -73,11 +73,11 @@
 			}
 			else if(filetype($current_item) == 'file'){
 				//file found
-				echo('<li id="record-'.$current_path.'" class="item_link file_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
+				echo('<li id="'.$current_path.'" class="item_link file_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
 			}
 			else if(filetype($current_item) == 'dir'){
 				//directory found
-				echo('<li id="record-'.$current_path.'" class="item_link directory_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
+				echo('<li id="'.$current_path.'" class="item_link directory_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
 			}
 			else{
 				//unkown item found
