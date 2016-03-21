@@ -188,22 +188,24 @@ $max_level = $level;
 						window.active_record_id = $(this).attr("id");
 					});
 					$(".item_link").off("click");
+					var newLevel = false;
 					$(".item_link").on("click", function(){
-						//var pathArray = $(this).attr("id").split("-");
-						var path = $(this).attr("id");//pathArray[1];
-						/*
-						for(var i = 2; i < pathArray.length; i++){
-							path += "-" + pathArray[i];
-						}
-						*/
-						
+						var path = $(this).attr("id");
 						var pathArray = path.split("/");
 						var level = pathArray.length - 1;
-						for(var i = window.level; i >= level; i--){
-							$("#level-"+i).remove();
+						if(level + 1 == window.level){
+							for(var i = window.level; i > level; i--){
+								$("#level-"+i).remove();
+							}
+							newLevel = false;
+						}
+						else{
+							for(var i = window.level; i >= level; i--){
+								$("#level-"+i).remove();
+							}
+							newLevel = true;
 						}
 						window.level = level;
-						
 						$.ajax({
 							type: "POST",
 							url: ".resources/script_load_item.php",
@@ -211,16 +213,21 @@ $max_level = $level;
 								"path": path,
 							}
 						}).done(function(contents){
-							var $ul = $("<ul>", {
-								"id": "level-" + window.level,
-								"class": "directory_container",
-								"style": "left:"+window.level*440+"px;",
-							});
-							$ul.append(contents);
-							$("#filesystem_container").append($ul);
-							$('html, body').animate({
-								scrollLeft: $("#level-"+window.level).offset().left
-							}, 100);
+							if(newLevel){
+								var $ul = $("<ul>", {
+									"id": "level-" + window.level,
+									"class": "directory_container",
+									"style": "left:"+window.level*440+"px;",
+								});
+								$ul.append(contents);
+								$("#filesystem_container").append($ul);
+								$('html, body').animate({
+									scrollLeft: $("#level-"+window.level).offset().left
+								}, 100);
+							}
+							else{
+								$("#level-"+window.level).html(contents);
+							}
 							window.level++;
 							loadItem();
 						});
