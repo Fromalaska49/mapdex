@@ -66,6 +66,7 @@ $max_level = $level;
 				height:18px;
 				padding:6px;
 				font-size:16px;
+				text-align:right;
 				display:inline-block;
 				margin:0px;
 				width:100px;
@@ -129,6 +130,35 @@ $max_level = $level;
 					$(".item_record_inactive").off("mousedown");
 					$(".item_record_active").off("mousedown");
 					$(".item_record_inactive").on("mousedown",function(){
+						var oldPathArray = window.active_record_id.split("/");//$(this).attr("id");
+						var newPathArray = $(this).attr("id").split("/");
+						var oldPath = "";
+						var newPath = "";
+						for(var i = 1; i < newPathArray.length; i++){
+							if(i < oldPathArray.length){
+								oldPath += "/" + oldPathArray[i];
+							}
+							newPath += "/" + newPathArray[i];
+							if(oldPath != newPath){
+								$("li[id='"+oldPath+"']").removeClass("item_record_active");
+								$("li[id='"+oldPath+"']").removeClass("item_record_deactivated");
+								$("li[id='"+oldPath+"']").addClass("item_record_inactive");
+							}
+						}
+						//had to split into two for loops because .item_record_deactivated was being removed immediately after being added (due to a slight delay)
+						newPath = "";
+						for(var i = 1; i < newPathArray.length; i++){
+							newPath += "/" + newPathArray[i];
+							$("li[id='"+newPath+"']").removeClass("item_record_active");
+							$("li[id='"+newPath+"']").removeClass("item_record_inactive");
+							$("li[id='"+newPath+"']").addClass("item_record_deactivated");
+						}
+						$("li[id='"+newPath+"']").removeClass("item_record_deactivated");
+						$("li[id='"+newPath+"']").removeClass("item_record_inactive");
+						$("li[id='"+newPath+"']").addClass("item_record_active");
+						window.active_record_id = $(this).attr("id");
+					});
+					$(".item_record_deactivated").on("mousedown",function(){
 						var oldPathArray = window.active_record_id.split("/");//$(this).attr("id");
 						var newPathArray = $(this).attr("id").split("/");
 						var oldPath = "";
