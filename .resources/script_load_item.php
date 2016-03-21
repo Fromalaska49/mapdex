@@ -25,7 +25,18 @@
 	*/
 	if(filetype($target) == 'file'){
 		//file found
-		echo('<a href="'.$protocol.$domain.implode('/', explode('/', dirname($_SERVER['PHP_SELF']), -2)).$path.'" class="item_link file_link"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" style="width:200px;height:auto;" /><br /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><br /><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($target)).'</div></a>');
+		$time_modified = filemtime($target);
+		$date_modified = '';
+		$time = time();
+		if($time - $time_modified < ($time % 86400) + 86400){
+			if(($time % 86400) > ($time_modified % 86400) && ($time - $time_modified) < 86400){
+				$date_modified = date('g:i a', $time_modified);
+			}
+			else{
+				$date_modified = 'Yesterday';
+			}
+		}
+		echo('<a href="'.$protocol.$domain.implode('/', explode('/', dirname($_SERVER['PHP_SELF']), -2)).$path.'" class="item_link file_link"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" style="width:200px;height:auto;" /><br /><div class="item_record_name">'.htmlentities($path_files[$path_len - 1]).'</div><br /><div class="item_record_time">'.$date_modified.'</div></a>');
 	}
 	else if(filetype($target) == 'dir'){
 		//directory found
@@ -43,16 +54,30 @@
 				}
 			}
 			*/
+			$time_modified = filemtime($current_item);
+			$date_modified = '';
+			$time = time();
+			if($time - $time_modified < ($time % 86400) + 86400){
+				if(($time % 86400) > ($time_modified % 86400) && ($time - $time_modified) < 86400){
+					$date_modified = date('g:i a', $time_modified);
+				}
+				else{
+					$date_modified = 'Yesterday';
+				}
+			}
+			else{
+				$date_modified = date('M j', $time_modified);
+			}
 			if(substr($item[$i], 0, 1) == '.'){
 				//invisible item found
 			}
 			else if(filetype($current_item) == 'file'){
 				//file found
-				echo('<li id="record-'.$current_path.'" class="item_link file_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li>');
+				echo('<li id="record-'.$current_path.'" class="item_link file_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
 			}
 			else if(filetype($current_item) == 'dir'){
 				//directory found
-				echo('<li id="record-'.$current_path.'" class="item_link directory_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li>');
+				echo('<li id="record-'.$current_path.'" class="item_link directory_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
 			}
 			else{
 				//unkown item found
