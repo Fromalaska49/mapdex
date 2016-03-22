@@ -127,6 +127,62 @@ $max_level = $level;
 				}
 				*/
 				function loadItem(){
+					$("body").off("keydown");
+					$("body").on("keydown", function(e){
+						e = e || window.event;
+						//alert("keydown detected: "+e.keyCode);
+						if(e.keyCode == 38) {
+							// up arrow
+							var path = $("li[id='"+window.active_record_id+"']").prev().attr("id");
+							window.level--;
+							$.ajax({
+								type: "POST",
+								url: ".resources/script_load_item.php",
+								data: {
+									"path": path,
+								}
+							}).done(function(contents){
+								$("#level-"+window.level).html(contents);
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+								window.active_record_id = path;
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+								window.level++;
+								loadItem();
+							});
+						}
+						else if(e.keyCode == 40) {
+							// down arrow
+							var path = $("li[id='"+window.active_record_id+"']").next().attr("id");
+							window.level--;
+							$.ajax({
+								type: "POST",
+								url: ".resources/script_load_item.php",
+								data: {
+									"path": path,
+								}
+							}).done(function(contents){
+								$("#level-"+window.level).html(contents);
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+								window.active_record_id = path;
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+								window.level++;
+								loadItem();
+							});
+							
+						}
+						else if(e.keyCode == 37) {
+							// left arrow
+							
+						}
+						else if(e.keyCode == 39) {
+							// right arrow
+							
+						}
+					});
 					$(".item_record_inactive").off("mousedown");
 					$(".item_record_active").off("mousedown");
 					$(".item_record_inactive").on("mousedown",function(){

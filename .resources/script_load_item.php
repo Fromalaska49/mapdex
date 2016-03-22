@@ -17,7 +17,6 @@
 	$item_record_class = 'item_record_inactive';
 	*/
 	$target = $cwd . $path;
-	echo('<!-- $target = '.$target.' -->');
 	/*
 	if(substr($item[$i], 0, 1) == '.'){
 		//invisible file found
