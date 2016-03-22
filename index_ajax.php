@@ -133,46 +133,51 @@ $max_level = $level;
 						//alert("keydown detected: "+e.keyCode);
 						if(e.keyCode == 38) {
 							// up arrow
-							var path = $("li[id='"+window.active_record_id+"']").prev().attr("id");
-							window.level--;
-							$.ajax({
-								type: "POST",
-								url: ".resources/script_load_item.php",
-								data: {
-									"path": path,
-								}
-							}).done(function(contents){
-								$("#level-"+window.level).html(contents);
-								$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
-								$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
-								window.active_record_id = path;
-								$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
-								$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
-								window.level++;
-								loadItem();
-							});
+							var $previousItem = $("li[id='"+window.active_record_id+"']").prev();
+							if($previousItem.length){
+								var path = $previousItem.attr("id");
+								window.level--;
+								$.ajax({
+									type: "POST",
+									url: ".resources/script_load_item.php",
+									data: {
+										"path": path,
+									}
+								}).done(function(contents){
+									$("#level-"+window.level).html(contents);
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+									window.active_record_id = path;
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+									window.level++;
+									loadItem();
+								});
+							}
 						}
 						else if(e.keyCode == 40) {
 							// down arrow
-							var path = $("li[id='"+window.active_record_id+"']").next().attr("id");
-							window.level--;
-							$.ajax({
-								type: "POST",
-								url: ".resources/script_load_item.php",
-								data: {
-									"path": path,
-								}
-							}).done(function(contents){
-								$("#level-"+window.level).html(contents);
-								$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
-								$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
-								window.active_record_id = path;
-								$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
-								$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
-								window.level++;
-								loadItem();
-							});
-							
+							var $nextItem = $("li[id='"+window.active_record_id+"']").next();
+							if($nextItem.length){
+								var path = $nextItem.attr("id");
+								window.level--;
+								$.ajax({
+									type: "POST",
+									url: ".resources/script_load_item.php",
+									data: {
+										"path": path,
+									}
+								}).done(function(contents){
+									$("#level-"+window.level).html(contents);
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+									window.active_record_id = path;
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+									window.level++;
+									loadItem();
+								});
+							}
 						}
 						else if(e.keyCode == 37) {
 							// left arrow
