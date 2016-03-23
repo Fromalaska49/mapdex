@@ -130,7 +130,6 @@ $max_level = $level;
 					$("body").off("keydown");
 					$("body").on("keydown", function(e){
 						e = e || window.event;
-						//alert("keydown detected: "+e.keyCode);
 						if(e.keyCode == 38) {
 							// up arrow
 							var $previousItem = $("li[id='"+window.active_record_id+"']").prev();
@@ -181,10 +180,67 @@ $max_level = $level;
 						}
 						else if(e.keyCode == 37) {
 							// left arrow
-							
+							var path = window.active_record_id;
+							var pathArray = path.split("/");
+							pathArray.pop();
+							path = pathArray.join("/");
+							var $previousItem = $("li[id='"+path+"']");
+							if($previousItem.length){
+								window.level--;
+								$("#level-"+window.level).remove();
+								window.level--;
+								$.ajax({
+									type: "POST",
+									url: ".resources/script_load_item.php",
+									data: {
+										"path": path,
+									}
+								}).done(function(contents){
+									$("#level-"+window.level).html(contents);
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+									window.active_record_id = path;
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_deactivated");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+									window.level++;
+									loadItem();
+								});
+							}
 						}
 						else if(e.keyCode == 39) {
 							// right arrow
+							window.level--;
+							var path = $("#level-"+window.level).children()[0].id;
+							var $nextItem = $("li[id='"+path+"']");
+							window.level++;
+							$("#level-"+window.level).remove();
+							$.ajax({
+								type: "POST",
+								url: ".resources/script_load_item.php",
+								data: {
+									"path": path,
+								}
+							}).done(function(contents){
+								var $ul = $("<ul>", {
+									"id": "level-" + window.level,
+									"class": "directory_container",
+									"style": "left:"+window.level*440+"px;",
+								});
+								$ul.append(contents);
+								$("#filesystem_container").append($ul);
+								$('html, body').animate({
+									scrollLeft: $("#level-"+window.level).offset().left
+								}, 100);
+								
+								$("#level-"+window.level-1).html(contents);
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_deactivated");
+								window.active_record_id = path;
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+								window.level++;
+								loadItem();
+							});
 							
 						}
 					});
@@ -220,7 +276,7 @@ $max_level = $level;
 						window.active_record_id = $(this).attr("id");
 					});
 					$(".item_record_deactivated").on("mousedown",function(){
-						var oldPathArray = window.active_record_id.split("/");//$(this).attr("id");
+						var oldPathArray = window.active_record_id.split("/");
 						var newPathArray = $(this).attr("id").split("/");
 						var oldPath = "";
 						var newPath = "";
