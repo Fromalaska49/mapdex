@@ -96,6 +96,7 @@ $max_level = $level;
 			$(document).ready(function(){
 				window.path = '';
 				window.active_record_id = "";
+				window.active_record_type = "";
 				window.level = 0;
 				$.ajax({
 					type: "POST",
@@ -114,19 +115,8 @@ $max_level = $level;
 					window.level++;
 					loadItem();
 				});
-				/*
-				function scrollToResult(){
-					var options = {};
-					var scrollLeft = $("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").offset().left-(window.innerWidth+200-$("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").width())/2;
-					var scrollTop = $("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").offset().top-(window.innerHeight+45-$("#<?php echo($target_record_id); ?>-td-<?php echo($target_field_id); ?>").height())/2;
-					options["scrollTop"] = scrollTop;
-					options["scrollLeft"] = scrollLeft;
-					var distance=Math.pow((scrollTop*scrollTop+scrollLeft*scrollLeft),(1/2));
-					duration=1000*(Math.log(distance+1097)-7);//1097 ~ e^7
-					$('html, body').animate(options, duration);
-				}
-				*/
 				function loadItem(){
+					document.title = window.active_record_id;
 					$("body").off("keydown");
 					$("body").on("keydown", function(e){
 						e = e || window.event;
@@ -246,8 +236,8 @@ $max_level = $level;
 					});
 					$(".item_record_inactive").off("mousedown");
 					$(".item_record_active").off("mousedown");
-					$(".item_record_inactive").on("mousedown",function(){
-						var oldPathArray = window.active_record_id.split("/");//$(this).attr("id");
+					$(".item_record_inactive").on("mousedown", function(){
+						var oldPathArray = window.active_record_id.split("/");
 						var newPathArray = $(this).attr("id").split("/");
 						var oldPath = "";
 						var newPath = "";
