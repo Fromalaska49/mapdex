@@ -116,7 +116,8 @@ $max_level = $level;
 					loadItem();
 				});
 				function loadItem(){
-					document.title = window.active_record_id;
+					var dirArray = window.active_record_id.split("/");
+					document.title = dirArray[dirArray.length - 1];
 					$("body").off("keydown");
 					$("body").on("keydown", function(e){
 						e = e || window.event;
