@@ -22,7 +22,10 @@
 		//invisible file found
 	}
 	*/
+	$is_file = 0;
+	$mime_type_index = 0;
 	if(filetype($target) == 'file'){
+		$is_file = 1;
 		//file found
 		$mime_array = explode('/', mime_content_type($target));
 		$file_type = $mime_array[0];
@@ -66,7 +69,6 @@
 			'x-world',
 			'www'
 		);
-		$mime_type_index;
 		if(in_array($file_type, $known_types)){
 			if($file_type == 'image'){
 				$mime_type_index = 1;
@@ -88,7 +90,7 @@
 			}
 			else{
 				//unsupported type found
-				$mime_type_index = -1;
+				$mime_type_index = 0;
 			}
 		}
 		else if(empty($file_type)){
@@ -97,16 +99,17 @@
 		}
 		else{
 			//unkown type found
-			$mime_type_index = -1;
+			$mime_type_index = 0;
 		}
 		echo($file_type);
 	}
 	else if(filetype($target) == 'dir'){
 		//dir found
-		echo('dir');
+		$is_file = 0;
 	}
 	else{
-		//unkown item found
-		echo('undefined');
+		//undefined item found
+		$is_file = 1;
 	}
+	echo($is_file . ':' . $mime_type_index);
 ?>
