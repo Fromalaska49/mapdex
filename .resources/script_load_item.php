@@ -8,20 +8,8 @@
 	}
 	$domain = $_SERVER['HTTP_HOST'];
 	$path_get_urlencoded = $protocol.$domain.'/.resources/script_load_item.php?var=false';
-	//echo('<h1>'.$path_html.'</h1>');
 	$cwd = implode('/', explode('/', dirname(getcwd()), -1));
-	/*
-	$item = scandir($cwd, SCANDIR_SORT_ASCENDING);
-	$sizeof_item = sizeof($item);
-	$current_item = $cwd.$item[$i];
-	$item_record_class = 'item_record_inactive';
-	*/
 	$target = $cwd . $path;
-	/*
-	if(substr($item[$i], 0, 1) == '.'){
-		//invisible file found
-	}
-	*/
 	if(filetype($target) == 'file'){
 		//file found
 		$time_modified = filemtime($target);
@@ -46,13 +34,6 @@
 			$current_item = $target.'/'.$item[$i];
 			$current_path = $path.'/'.$item[$i];
 			$item_record_class = 'item_record_inactive';
-			/*
-			if($level < $max_level -1){
-				if($url_path_array[$level+1] == $item[$i]){
-					$item_record_class = 'item_record_active';
-				}
-			}
-			*/
 			$time_modified = filemtime($current_item);
 			$date_modified = '';
 			$time = time();
@@ -80,7 +61,7 @@
 			}
 			else{
 				//unkown item found
-				//echo('<li class="item_record"><div class="item_record_name">Error: cannot detect filetype of <a href="'.$protocol.$domain.'/'.rawurlencode($item[$i]).'">'.htmlentities($item[$i]).'</a></div></li>');
+				echo('<li id="'.$current_path.'" class="item_link file_link '.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.$date_modified.'</div></li>');
 			}
 		}
 	}

@@ -1,3 +1,22 @@
+<?php
+$protocol = 'http://';
+if(isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0){
+	$protocol = 'https://';
+}
+$domain = $_SERVER['HTTP_HOST'];
+$path_get_urlencoded = $protocol.$domain.'/.resources/script_load_item.php?var=false';
+$path_html = '/<a href="'.$path_get_urlencoded.'">localhost</a>/';
+$url_path_array = array();
+$url_path_array[0] = '';
+for($level = 1; isset($_GET['l'.$level]) && !empty($_GET['l'.$level]); $level++){
+	$directory = rawurldecode($_GET['l'.$level]);
+	$url_path_array[$level] = $directory;
+	$path_get_urlencoded .= '&l'.$level.'='.rawurlencode($directory);
+	$path_html .= '<a href="'.$path_get_urlencoded.'">'.htmlentities($directory).'</a>/';
+}
+$cwd = getcwd();
+$max_level = $level;
+?>
 <html>
 	<head>
 		<style type="text/css">
@@ -9,6 +28,13 @@
 				padding:5px;
 				text-align:left;
 				background-color:#FFFFFF;
+				color:#000000;
+			}
+			.item_record_deactivated{
+				list-style-type:none;
+				padding:5px;
+				text-align:left;
+				background-color:#D0D0D0;
 				color:#000000;
 			}
 			.item_record_active{
@@ -32,17 +58,21 @@
 				font-size:16px;
 				display:inline-block;
 				margin:0px;
-				width:400px;
+				width:200px;
 				overflow:hidden;
 			}
 			.item_record_time{
 				height:18px;
 				padding:6px;
 				font-size:16px;
+				text-align:right;
 				display:inline-block;
 				margin:0px;
-				width:200px;
+				width:100px;
 				overflow:hidden;
+			}
+			.item_link{
+				margin-left:-39px;
 			}
 			a.item_link, a.item_link:hover, a.item_link:visited{
 				color:black;
@@ -52,8 +82,8 @@
 				position:absolute;
 				top:100px;
 				bottom:0px;
-				width:800px;
-				border-style:solid;
+				width:400px;
+				border-style:solid solid solid none;
 				border-color:#CCCCCC;
 				border-width:1px;
 				overflow-y:scroll;
@@ -63,78 +93,284 @@
 		<script src=".resources/jquery-2.2.0.js"></script>
 		<script type="text/javascript">
 			$(document).ready(function(){
-				window.active_record_id;
-				$("a.item_link").on("click", function(){
-					event.preventDefault();
+				window.path = '';
+				window.active_record_id = "";
+				window.active_record_type = "";
+				window.level = 0;
+				$.ajax({
+					type: "POST",
+					url: ".resources/script_load_item.php",
+					data: {
+						"path": "",
+					}
+				}).done(function(contents){
+					var $ul = $("<ul>", {
+						"id": "level-"+window.level,
+						"class": "directory_container",
+						"style": "left:"+window.level*800+"px;",
+					});
+					$ul.append(contents);
+					$("#filesystem_container").append($ul);
+					window.level++;
+					loadItem();
 				});
+				
+				function isFile(path){
+					$.ajax({
+						type: "POST",
+						url: ,
+						data: {
+							"path": path,
+						}
+					}).done(function(response){
+						return response && 1;//the && 1 is to force the return of a boolean value
+					});
+				}
+				
+				function openFile(){
+					
+					return true;
+				}
+				
+				function loadItem(){
+					var dirArray = window.active_record_id.split("/");
+					document.title = dirArray.pop();
+					$("body").off("keydown");
+					$("body").on("keydown", function(e){
+						e = e || window.event;
+						if(e.keyCode == 38) {
+							// up arrow
+							var $previousItem = $("li[id='"+window.active_record_id+"']").prev();
+							if($previousItem.length){
+								var path = $previousItem.attr("id");
+								window.level--;
+								$.ajax({
+									type: "POST",
+									url: ".resources/script_load_item.php",
+									data: {
+										"path": path,
+									}
+								}).done(function(contents){
+									$("#level-"+window.level).html(contents);
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+									window.active_record_id = path;
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+									window.level++;
+									loadItem();
+								});
+							}
+						}
+						else if(e.keyCode == 40) {
+							// down arrow
+							var $nextItem = $("li[id='"+window.active_record_id+"']").next();
+							if($nextItem.length){
+								var path = $nextItem.attr("id");
+								window.level--;
+								$.ajax({
+									type: "POST",
+									url: ".resources/script_load_item.php",
+									data: {
+										"path": path,
+									}
+								}).done(function(contents){
+									$("#level-"+window.level).html(contents);
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+									window.active_record_id = path;
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+									window.level++;
+									loadItem();
+								});
+							}
+						}
+						else if(e.keyCode == 37) {
+							// left arrow
+							var path = window.active_record_id;
+							var pathArray = path.split("/");
+							pathArray.pop();
+							path = pathArray.join("/");
+							var $previousItem = $("li[id='"+path+"']");
+							if($previousItem.length){
+								window.level--;
+								$("#level-"+window.level).remove();
+								window.level--;
+								$.ajax({
+									type: "POST",
+									url: ".resources/script_load_item.php",
+									data: {
+										"path": path,
+									}
+								}).done(function(contents){
+									$("#level-"+window.level).html(contents);
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_inactive");
+									window.active_record_id = path;
+									$("li[id='"+window.active_record_id+"']").removeClass("item_record_deactivated");
+									$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+									window.level++;
+									loadItem();
+								});
+							}
+						}
+						else if(e.keyCode == 39) {
+							// right arrow
+							window.level--;
+							var path = $("#level-"+window.level).children()[0].id;
+							var $nextItem = $("li[id='"+path+"']");
+							window.level++;
+							$("#level-"+window.level).remove();
+							$.ajax({
+								type: "POST",
+								url: ".resources/script_load_item.php",
+								data: {
+									"path": path,
+								}
+							}).done(function(contents){
+								var $ul = $("<ul>", {
+									"id": "level-" + window.level,
+									"class": "directory_container",
+									"style": "left:"+window.level*440+"px;",
+								});
+								$ul.append(contents);
+								$("#filesystem_container").append($ul);
+								$('html, body').animate({
+									scrollLeft: $("#level-"+window.level).offset().left
+								}, 100);
+								
+								$("#level-"+window.level-1).html(contents);
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_active");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_deactivated");
+								window.active_record_id = path;
+								$("li[id='"+window.active_record_id+"']").removeClass("item_record_inactive");
+								$("li[id='"+window.active_record_id+"']").addClass("item_record_active");
+								window.level++;
+								loadItem();
+							});
+							
+						}
+					});
+					$(".item_record_inactive").off("mousedown");
+					$(".item_record_active").off("mousedown");
+					$(".item_record_inactive").on("mousedown", function(){
+						var oldPathArray = window.active_record_id.split("/");
+						var newPathArray = $(this).attr("id").split("/");
+						var oldPath = "";
+						var newPath = "";
+						for(var i = 1; i < newPathArray.length; i++){
+							if(i < oldPathArray.length){
+								oldPath += "/" + oldPathArray[i];
+							}
+							newPath += "/" + newPathArray[i];
+							if(oldPath != newPath){
+								$("li[id='"+oldPath+"']").removeClass("item_record_active");
+								$("li[id='"+oldPath+"']").removeClass("item_record_deactivated");
+								$("li[id='"+oldPath+"']").addClass("item_record_inactive");
+							}
+						}
+						//had to split into two for loops because .item_record_deactivated was being removed immediately after being added (due to a slight delay)
+						newPath = "";
+						for(var i = 1; i < newPathArray.length; i++){
+							newPath += "/" + newPathArray[i];
+							$("li[id='"+newPath+"']").removeClass("item_record_active");
+							$("li[id='"+newPath+"']").removeClass("item_record_inactive");
+							$("li[id='"+newPath+"']").addClass("item_record_deactivated");
+						}
+						$("li[id='"+newPath+"']").removeClass("item_record_deactivated");
+						$("li[id='"+newPath+"']").removeClass("item_record_inactive");
+						$("li[id='"+newPath+"']").addClass("item_record_active");
+						window.active_record_id = $(this).attr("id");
+					});
+					$(".item_record_deactivated").on("mousedown",function(){
+						var oldPathArray = window.active_record_id.split("/");
+						var newPathArray = $(this).attr("id").split("/");
+						var oldPath = "";
+						var newPath = "";
+						for(var i = 1; i < newPathArray.length; i++){
+							if(i < oldPathArray.length){
+								oldPath += "/" + oldPathArray[i];
+							}
+							newPath += "/" + newPathArray[i];
+							if(oldPath != newPath){
+								$("li[id='"+oldPath+"']").removeClass("item_record_active");
+								$("li[id='"+oldPath+"']").removeClass("item_record_deactivated");
+								$("li[id='"+oldPath+"']").addClass("item_record_inactive");
+							}
+						}
+						//had to split into two for loops because .item_record_deactivated was being removed immediately after being added (due to a slight delay)
+						newPath = "";
+						for(var i = 1; i < newPathArray.length; i++){
+							newPath += "/" + newPathArray[i];
+							$("li[id='"+newPath+"']").removeClass("item_record_active");
+							$("li[id='"+newPath+"']").removeClass("item_record_inactive");
+							$("li[id='"+newPath+"']").addClass("item_record_deactivated");
+						}
+						$("li[id='"+newPath+"']").removeClass("item_record_deactivated");
+						$("li[id='"+newPath+"']").removeClass("item_record_inactive");
+						$("li[id='"+newPath+"']").addClass("item_record_active");
+						window.active_record_id = $(this).attr("id");
+					});
+					$(".item_link").off("click");
+					var newLevel = false;
+					$(".item_link").on("click", function(){
+						var path = $(this).attr("id");
+						var pathArray = path.split("/");
+						var level = pathArray.length - 1;
+						if(level + 1 == window.level){
+							for(var i = window.level; i > level; i--){
+								$("#level-"+i).remove();
+							}
+							newLevel = false;
+						}
+						else{
+							for(var i = window.level; i >= level; i--){
+								$("#level-"+i).remove();
+							}
+							newLevel = true;
+						}
+						window.level = level;
+						$.ajax({
+							type: "POST",
+							url: ".resources/script_load_item.php",
+							data: {
+								"path": path,
+							}
+						}).done(function(contents){
+							if(newLevel){
+								var $ul = $("<ul>", {
+									"id": "level-" + window.level,
+									"class": "directory_container",
+									"style": "left:"+window.level*440+"px;",
+								});
+								$ul.append(contents);
+								$("#filesystem_container").append($ul);
+								$('html, body').animate({
+									scrollLeft: $("#level-"+window.level).offset().left
+								}, 100);
+							}
+							else{
+								$("#level-"+window.level).html(contents);
+							}
+							window.level++;
+							loadItem();
+						});
+					});
+				}
 				$("a.item_link").on("dblclick", function(){
 					window.location.assign($(this).attr("href"));
-				});
-				$(".item_record_inactive").on("mousedown",function(){
-					$("#"+window.active_record_id).removeClass("item_record_active");
-					$("#"+window.active_record_id).addClass("item_record_inactive");
-					$(this).addClass("item_record_active");
-					$(this).removeClass("item_record_inactive");
-					window.active_record_id = this.id;
 				});
 			});
 		</script>
 	</head>
 	<body>
-		<?php
-		$protocol = 'http://';
-		if(isset($_SERVER['HTTPS']) && strlen($_SERVER['HTTPS']) > 0){
-			$protocol = 'https://';
-		}
-		$domain = $_SERVER['HTTP_HOST'];
-		$path_get_urlencoded = $protocol.$domain.'/index.php?var=false';
-		$path_html = '/<a href="'.$path_get_urlencoded.'">localhost</a>/';
-		$url_path_array = array();
-		$url_path_array[0] = '';
-		for($level = 1; isset($_GET['l'.$level]) && !empty($_GET['l'.$level]); $level++){
-			$directory = rawurldecode($_GET['l'.$level]);
-			$url_path_array[$level] = $directory;
-			//$url_path .= rawurlencode($directory).'/';
-			$path_get_urlencoded .= '&l'.$level.'='.rawurlencode($directory);
-			$path_html .= '<a href="'.$path_get_urlencoded.'">'.htmlentities($directory).'</a>/';
-		}
-		echo('<h1>'.$path_html.'</h1>');
-		$cwd = getcwd();
-		$max_level = $level;
-		$relative_url = '';
-		for($level = 0; $level < $max_level; $level++){
-			$cwd .= $url_path_array[$level].'/';
-			$relative_url .= $url_path_array[$level].'/';
-			//echo($cwd.'<br />');
-			$item = scandir($cwd, SCANDIR_SORT_ASCENDING);
-			$sizeof_item = sizeof($item);
-			echo('<ul class="directory_container" style="left:'.($level*800).'px;">');
-			for($i = 0; $i < $sizeof_item; $i++){
-				$current_item = $cwd.$item[$i];
-				$item_record_class = 'item_record_inactive';
-				if($level < $max_level -1){
-					if($url_path_array[$level+1] == $item[$i]){
-						$item_record_class = 'item_record_active';
-					}
-				}
-				if(substr($item[$i], 0, 1) == '.'){
-					//invisible item found
-				}
-				else if(filetype($current_item) == 'file'){
-					//file found
-					echo('<a href="'.$relative_url.rawurlencode($item[$i]).'" class="item_link file_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFile.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
-				}
-				else if(filetype($current_item) == 'dir'){
-					//directory found
-					echo('<a href="'.$path_get_urlencoded.'&l'.($level+1).'='.rawurlencode($item[$i]).'" class="item_link directory_link"><li id="record_'.$level.'_'.$i.'" class="'.$item_record_class.'"><img src=".resources/img/icons/SidebarGenericFolder.png" class="item_record_icon" /><div class="item_record_name">'.htmlentities($item[$i]).'</div><div class="item_record_time">'.date('M n, Y, g:i A', filemtime($current_item)).'</div></li></a>');
-				}
-				else{
-					//unkown item found
-					//echo('<li class="item_record"><div class="item_record_name">Error: cannot detect filetype of <a href="'.$protocol.$domain.'/'.rawurlencode($item[$i]).'">'.htmlentities($item[$i]).'</a></div></li>');
-				}
-			}
-			echo('</ul>');
-		}
-		?>
+		<h1>
+			<?php
+				echo($path_html);
+			?>
+		</h1>
+		<div id="filesystem_container">
+		</div>
 	</body>
 </html>
